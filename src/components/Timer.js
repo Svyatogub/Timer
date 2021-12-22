@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Observable } from "rxjs";
 
 const Timer = (props) => {
   const [hours, setHours] = useState(0);

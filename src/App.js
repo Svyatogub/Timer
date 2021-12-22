@@ -1,25 +1,146 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react'
+import "./App.css"
+import Timer from "./components/Timer";
+
+import { interval } from "rxjs";
+import { map, pipe } from "rxjs/operators";
+
 
 function App() {
+  
+  const [timer, setTimer] = useState(0);
+  const [diff, setDiff] = useState(0);
+
+  const [subscription, setSubscription] = useState("");
+  const [prevent, setPrevent] = useState(true);
+
+  const onStartHandler = () => {
+    if (!subscription) {
+      const timerSubscription = interval(1000)
+        .pipe(map((v) => v + 1))
+        .subscribe((v) => {
+          setTimer(v + diff);
+        });
+      setSubscription(timerSubscription);
+    } else {
+      subscription.unsubscribe();
+      setTimer(0);
+      setDiff(0);
+      setSubscription("");
+    }
+  };
+
+  const onWaitHandler = (event) => {
+    if (prevent) {
+      setPrevent(false);
+      const timerInstance = setTimeout(function () {
+        setPrevent(true);
+        clearTimeout(timerInstance);
+      }, 300);
+    } else {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+
+      setDiff(timer);
+      setSubscription("");
+    }
+  };
+
+  const onResetHandler = () => {
+    if (subscription) {
+      subscription.unsubscribe();
+    }
+
+    const timerSubscription = interval(1000).subscribe((v) => {
+      setTimer(v);
+    });
+    setSubscription(timerSubscription);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div onClick={onWaitHandler} className="Block">
+      <div className="Content">
+        <div className="TimeLeft">
+          <Timer Countdown={timer ? timer : diff} />
+        </div>
+        <div className="Buttons">
+          <button onClick={onStartHandler}>start/stop</button>
+          <button onClick={onResetHandler}>reset</button>
+        </div>
+      </div>
     </div>
   );
-}
 
+
+
+
+
+
+
+
+  /*const [timer, setTimer] = useState(0);
+  const [diff, setDiff] = useState(0);
+
+  const [subscription, setSubscription] = useState("");
+  const [prevent, setPrevent] = useState(true);
+
+  const onStartHandler = () => {
+    if (!subscription) {
+      const timerSubscription = interval(1000)
+        .pipe(map((v) => v + 1))
+        .subscribe((v) => {
+          setTimer(v + diff);
+        });
+      setSubscription(timerSubscription);
+    } else {
+      subscription.unsubscribe();
+      setTimer(0);
+      setDiff(0);
+      setSubscription("");
+    }
+  };
+
+  const onWaitHandler = (event) => {
+    if (prevent) {
+      setPrevent(false);
+      const timerInstance = setTimeout(function () {
+        setPrevent(true);
+        clearTimeout(timerInstance);
+      }, 300);
+    } else {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+
+      setDiff(timer);
+      setSubscription("");
+    }
+  };
+
+  const onResetHandler = () => {
+    if (subscription) {
+      subscription.unsubscribe();
+    }
+
+    const timerSubscription = interval(1000).subscribe((v) => {
+      setTimer(v);
+    });
+    setSubscription(timerSubscription);
+  };
+
+  return (
+    <div onClick={onWaitHandler} className="Block">
+      <div className="Content">
+        <div className="TimeLeft">
+          <Timer Countdown={timer ? timer : diff} />
+        </div>
+        <div className="Buttons">
+          <button onClick={onStartHandler}>start/stop</button>
+          <button onClick={onResetHandler}>reset</button>
+        </div>
+      </div>
+    </div>
+  );*/
+}
 export default App;

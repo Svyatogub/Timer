@@ -26,7 +26,7 @@ function App() {
       subscription.unsubscribe();
       setTimer(0);
       setDiff(0);
-      setSubscription("");
+      setSubscription(null);
     }
   };
 
@@ -59,13 +59,14 @@ function App() {
   };
 
   return (
-    <div onClick={onWaitHandler} className="Block">
-      <div className="Content">
-        <div className="TimeLeft">
+    <div className="Block">
+      <div>
+        <div>
           <Timer Countdown={timer ? timer : diff} />
         </div>
         <div className="Buttons">
           <button onClick={onStartHandler}>start/stop</button>
+          <button onClick={onWaitHandler}>wait</button>
           <button onClick={onResetHandler}>reset</button>
         </div>
       </div>
